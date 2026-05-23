@@ -14,11 +14,19 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 @st.cache_data #load the data on first open and then store it in the cache to save on loading time for the big DF
+@st.cache_data
 def load_and_prepare():
-    df_transaction = pd.read_csv("transaction_data.csv.gz")
-    df_product = pd.read_csv("product.csv.gz")
-    df = df_transaction[(df_transaction["QUANTITY"] > 0) & (df_transaction["SALES_VALUE"] > 0)] #remove any non-sales
-    df = df.merge(df_product[["PRODUCT_ID", "DEPARTMENT", "COMMODITY_DESC"]], on="PRODUCT_ID") #join two df's into one on thr ptoduct ID
+    df_transaction = pd.read_csv(
+        "transaction_data.csv.gz",
+        usecols=["household_key", "BASKET_ID", "PRODUCT_ID",
+                 "QUANTITY", "SALES_VALUE", "WEEK_NO"],
+    )
+    df_product = pd.read_csv(
+        "product.csv.gz",
+        usecols=["PRODUCT_ID", "DEPARTMENT", "COMMODITY_DESC"],
+    )
+    df = df_transaction[(df_transaction["QUANTITY"] > 0) & (df_transaction["SALES_VALUE"] > 0)]
+    df = df.merge(df_product[["PRODUCT_ID", "DEPARTMENT", "COMMODITY_DESC"]], on="PRODUCT_ID")
     return df
 
 df = load_and_prepare() #prep data for use - one slow load to start and then available for use
