@@ -110,7 +110,7 @@ st.markdown("""This chart shows how total sales rose and fell week by week acros
 
 trend = sub.groupby("WEEK_NO", as_index=False)["SALES_VALUE"].sum().sort_values("WEEK_NO")
 
-fig = px.line(trend,x="WEEK_NO", y="SALES_VALUE",labels={"WEEK_NO": "Week (1 = start of panel)", "SALES_VALUE": "Total sales ($)"})
+fig = px.line(trend,x="WEEK_NO", y="SALES_VALUE",labels={"WEEK_NO": "Week: ", "SALES_VALUE": "Total sales ($)"})
 fig.update_layout(font=dict(size=16))
 fig.update_traces(line=dict(width=3)) 
 st.plotly_chart(fig, use_container_width=True)
