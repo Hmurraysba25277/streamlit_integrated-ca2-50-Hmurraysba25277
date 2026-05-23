@@ -15,8 +15,8 @@ st.markdown("""
 
 @st.cache_data #load the data on first open and then store it in the cache to save on loading time for the big DF
 def load_and_prepare():
-    df_transaction = pd.read_csv("transaction_data.csv")
-    df_product = pd.read_csv("product.csv")
+    df_transaction = pd.read_csv("transaction_data.csv.gz")
+    df_product = pd.read_csv("product.csv.gz")
     df = df_transaction[(df_transaction["QUANTITY"] > 0) & (df_transaction["SALES_VALUE"] > 0)] #remove any non-sales
     df = df.merge(df_product[["PRODUCT_ID", "DEPARTMENT", "COMMODITY_DESC"]], on="PRODUCT_ID") #join two df's into one on thr ptoduct ID
     return df
@@ -47,7 +47,7 @@ st.divider()
 
 st.markdown(f"### **{selected_dept}** - Headline figures")
 
-st.markdown("""Introduction to headline figures section""")
+st.markdown("""These figures give a quick, high-level summary of the department you have selected: the total amount spent, the number of separate shopping trips, how many different households shopped, and how many product categories were involved.""")
 
 col1, col2, col3, col4 = st.columns(4) #list figures side by side as columns 
 col1.metric("Total Sales",f"${sub['SALES_VALUE'].sum():,.0f}")
@@ -61,7 +61,7 @@ st.divider()
 
 st.markdown("### Why this dataset is suitable for Machine Learning")
 
-st.markdown("""Explainer introduction as to why the user would be interested in the below two figures. Avg trips per household because X, average items per basket because Y.""")
+st.markdown("""Machine learning works by finding patterns in past shopping behaviour and the two figures below show why this data is well suited for this. Households return many times, so we can learn their habits, and with each basket holding several items, we can see which products tend to be bought together.""")
 
 avg_baskets_per_household = sub.groupby("household_key")["BASKET_ID"].nunique().mean() #avg number of unique baskets per household 
 avg_items_per_basket = sub.groupby("BASKET_ID").size().mean() #avg basket size per household
@@ -84,7 +84,7 @@ st.divider()
 
 st.markdown(f"### Top 10 Commodities by sales in **{selected_dept}**")
 
-st.markdown("""Introduction to bar chart section""")
+st.markdown("""This chart shows the ten product categories that brought in the most sales for the selected department. The longer the bar, the higher the total sales for that category.""")
 
 chart_data = sub.groupby("COMMODITY_DESC")["SALES_VALUE"].sum().nlargest(10).reset_index() #taking 10 commoditys in dept by largest sales val 
 
@@ -97,7 +97,7 @@ st.divider()
 
 st.markdown(f"### **{selected_dept}** - Weekly sales trend")
 
-st.markdown("""Introduction to graph section""")
+st.markdown("""This chart shows how total sales rose and fell week by week across the two-year period, making it easy to spot busier and quieter times.""")
 
 trend = sub.groupby("WEEK_NO", as_index=False)["SALES_VALUE"].sum().sort_values("WEEK_NO")
 
@@ -111,7 +111,8 @@ st.plotly_chart(fig, use_container_width=True)
 st.divider()
 st.markdown(f"### Sales breakdown — commodities within {selected_dept}")
 
-st.markdown("""Introduction to Tree Map section""")
+st.markdown("""The below Tree graph shows a breakdown of the most popular items by department. The percentage denotes out of the full department sales, what % are from that particular item.   
+            Hover your mouse over each item in order to get total sales values for the item.""")
 
 breakdown = sub.groupby(["DEPARTMENT", "COMMODITY_DESC"], as_index=False)["SALES_VALUE"].sum()
 
