@@ -9,7 +9,8 @@ st.markdown("""
     .stApp { font-size: 18px; }
     h1 { font-size: 38px !important; }
     h3 { font-size: 24px !important; }
-    .stMetric { background-color: #f5f5f5; padding: 12px; border-radius: 8px; }
+    .stMetric {background-color: #1c2630;border: 1px solid #3a4753;padding: 16px;border-radius: 8px;
+}
 </style>
 """, unsafe_allow_html=True)
 
